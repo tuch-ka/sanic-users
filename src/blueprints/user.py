@@ -10,6 +10,7 @@ bp = Blueprint('user')
 
 @bp.post('/registry')
 async def create_user(request):
+    """Создаёт пользователя в бд"""
     try:
         user = UserRegistrySchema().load(request.json)
     except ValidationError as error:
@@ -20,6 +21,7 @@ async def create_user(request):
 
 @bp.get('/<user_id:int>')
 async def read_user(request, user_id):
+    """Считывает данные пользователя из бд"""
     return json(
         {
             'user_id': user_id,

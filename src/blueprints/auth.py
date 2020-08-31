@@ -10,7 +10,7 @@ bp = Blueprint('auth')
 
 @bp.post('/auth')
 async def login(request):
-
+    """Авторизует пользователя и выдаёт ему JWT"""
     try:
         data = UserAuthSchema().load(request.json)
     except ValidationError as error:
@@ -23,6 +23,7 @@ async def login(request):
 
 @bp.post('/logout')
 async def logout(request):
+    """Отменяет авторизацию пользователя"""
     response = empty(200)
     del response.cookies['token']
     return response
