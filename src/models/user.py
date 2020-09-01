@@ -22,3 +22,7 @@ class User(BasicModel):
     @classmethod
     async def create(cls, data: dict) -> 'User':
         return await manager.create(cls, **data)
+
+    @classmethod
+    async def get_by_id(cls, user_id: int) -> 'User':
+        return await manager.get(cls, user_id=user_id)
