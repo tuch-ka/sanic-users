@@ -31,8 +31,11 @@ class User(BasicModel):
         return await manager.create(cls, **data)
 
     @classmethod
-    async def get_by_id(cls, user_id: int) -> 'User':
-        return await manager.get(cls, user_id=user_id)
+    async def get_by_id(cls, user_id: int) -> Optional['User']:
+        try:
+            return await manager.get(cls, user_id=user_id)
+        except cls.DoesNotExist:
+            return None
 
     @classmethod
     async def auth(cls, data: dict) -> Optional['User']:

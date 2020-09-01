@@ -33,9 +33,8 @@ async def create_user(request):
 async def read_user(request, user_id):
     """Считывает данные пользователя из бд"""
 
-    try:
-        user = await User.get_by_id(user_id)
-    except User.DoesNotExist:
+    user = await User.get_by_id(user_id)
+    if user is None:
         return empty(404)
 
     return json(user.to_dict(), status=200)
