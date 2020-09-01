@@ -3,6 +3,7 @@ from sanic.response import json, empty
 
 from marshmallow import ValidationError
 from schemas.user import UserAuthSchema
+from models.user import User
 
 
 bp = Blueprint('auth')
@@ -16,8 +17,16 @@ async def login(request):
     except ValidationError as error:
         return json(error.messages, status=400)
 
-    response = json({'status': 'OK'}, status=200)
-    response.cookies['token'] = 'token'
+    user = await User.auth(data=data)
+
+    if user is None:
+        return empty(404)
+
+    response = json({
+        'user_id': user.user_id,
+        'token': user.token
+    }, status=200)
+    response.cookies['token'] = user.token
     return response
 
 

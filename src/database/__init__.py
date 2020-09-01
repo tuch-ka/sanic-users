@@ -3,6 +3,7 @@ import asyncio
 from peewee_async import PostgresqlDatabase, Manager
 
 
+# TODO: в .env
 DB_HOST = 'localhost'
 DB_DATABASE = 'user_offers'
 DB_PORT = '5432'
