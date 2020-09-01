@@ -1,5 +1,7 @@
-import peewee
 from typing import Optional
+
+import peewee
+from peewee import IntegrityError
 
 from . import BasicModel
 from database import manager
@@ -27,8 +29,11 @@ class User(BasicModel):
         }
 
     @classmethod
-    async def create(cls, data: dict) -> 'User':
-        return await manager.create(cls, **data)
+    async def create(cls, data: dict) -> Optional['User']:
+        try:
+            return await manager.create(cls, **data)
+        except IntegrityError:
+            return None
 
     @classmethod
     async def get_by_id(cls, user_id: int) -> Optional['User']:

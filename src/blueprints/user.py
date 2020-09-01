@@ -6,7 +6,6 @@ from schemas.user import UserRegistrySchema
 from models.user import User
 from auth import auth_required
 
-from peewee import IntegrityError
 from marshmallow import ValidationError
 
 bp = Blueprint('user')
@@ -20,10 +19,9 @@ async def create_user(request):
     except ValidationError as error:
         return json(error.messages, status=400)
 
-    try:
-        user = await User.create(data=user_data)
-    except IntegrityError as error:
-        return json(error.args, 400)
+    user = await User.create(data=user_data)
+    if user is None:
+        return empty(409)
 
     return json(user.to_dict(), status=201)
 
