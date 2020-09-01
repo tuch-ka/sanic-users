@@ -20,7 +20,7 @@ async def login(request):
     user = await User.auth(data=data)
 
     if user is None:
-        return empty(404)
+        return empty(400)
 
     response = json({
         'user_id': user.user_id,

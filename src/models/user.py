@@ -1,4 +1,5 @@
 from typing import Optional
+import bcrypt
 
 import peewee
 from peewee import IntegrityError
@@ -30,6 +31,7 @@ class User(BasicModel):
 
     @classmethod
     async def create(cls, data: dict) -> Optional['User']:
+        data['password'] = bcrypt.hashpw(data['password'].encode(), bcrypt.gensalt())
         try:
             return await manager.create(cls, **data)
         except IntegrityError:
@@ -44,10 +46,17 @@ class User(BasicModel):
 
     @classmethod
     async def auth(cls, data: dict) -> Optional['User']:
+        username = data.get('username')
+        password = data.get('password')
+
         try:
-            return await manager.get(cls, **data)
+            user = await manager.get(cls, username=username)
         except cls.DoesNotExist:
             return None
+
+        if bcrypt.checkpw(password.encode(), user.password.encode()):
+            return user
+        return None
 
     @property
     def token(self) -> str:
