@@ -1,20 +1,13 @@
 from peewee_async import PostgresqlDatabase, Manager
+import config
 
-
-# TODO: в .env
-DB_HOST = 'localhost'
-DB_DATABASE = 'user_offers'
-DB_PORT = '5432'
-DB_USER = 'username'
-DB_PASSWORD = 'password'
-DB_URL = f'{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_DATABASE}'
 
 db = PostgresqlDatabase(
-    DB_DATABASE,
-    user=DB_USER,
-    password=DB_PASSWORD,
-    host=DB_HOST,
-    port=DB_PORT,
+    config.DB_DATABASE,
+    user=config.DB_USER,
+    password=config.DB_PASSWORD,
+    host=config.DB_HOST,
+    port=config.DB_PORT,
 )
 
 manager = Manager(db)

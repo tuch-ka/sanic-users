@@ -4,8 +4,7 @@ from typing import Optional
 import jwt
 from sanic.response import empty
 
-
-TOKEN_KEY = 'secret_key'    # TODO: в .env
+from config import TOKEN_KEY
 
 
 def auth_required(func):
