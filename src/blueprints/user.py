@@ -1,8 +1,12 @@
 from sanic import Blueprint
-from sanic.response import json, empty
+from sanic.response import json
 
 from marshmallow import ValidationError
 from schemas.user import UserRegistrySchema
+
+from models.user import User
+
+from peewee import IntegrityError
 
 
 bp = Blueprint('user')
@@ -12,11 +16,16 @@ bp = Blueprint('user')
 async def create_user(request):
     """Создаёт пользователя в бд"""
     try:
-        user = UserRegistrySchema().load(request.json)
+        user_data = UserRegistrySchema().load(request.json)
     except ValidationError as error:
         return json(error.messages, status=400)
 
-    return json(user, status=201)
+    try:
+        user = await User.create(data=user_data)
+    except IntegrityError as error:
+        return json(error.args, 400)
+
+    return json(user.to_dict(), status=201)
 
 
 @bp.get('/<user_id:int>')

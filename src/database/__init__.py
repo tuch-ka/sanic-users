@@ -1,4 +1,6 @@
-from peewee_async import PostgresqlDatabase
+import asyncio
+
+from peewee_async import PostgresqlDatabase, Manager
 
 
 DB_HOST = 'localhost'
@@ -15,3 +17,6 @@ db = PostgresqlDatabase(
     host=DB_HOST,
     port=DB_PORT,
 )
+
+loop = asyncio.new_event_loop()
+manager = Manager(db, loop=loop)
