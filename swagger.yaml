@@ -1,0 +1,167 @@
+openapi: 3.0.0
+
+info:
+  description: |
+    User service.
+  version: "1.0.0"
+  title: part of api fo User-Offers services
+  contact:
+    email: tuch_ka@mail.ru
+    
+tags:
+  - name: user
+    description: Operations about users
+
+paths:
+          
+  /user/registry:
+    post:
+      tags:
+        - user
+      summary: Create user
+      operationId: createUser
+      responses:
+        201:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserCreateResponse'
+        400:
+          description: bad request
+        409:
+          description: username conflict
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreateRequest'
+        description: User data
+        required: true
+        
+  /user/auth:
+    post:
+      tags:
+        - user
+      summary: Logs user into the system
+      operationId: loginUser
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                  properties:
+                    id:
+                      type: integer
+                      format: int64
+                    token:
+                      type: string
+          headers:
+            token:
+              schema:
+                type: string
+              description: JWT token
+        '400':
+          description: wrong username or password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+        description: Created user object
+        required: true
+      security: []
+      
+  /user/logout:
+    post:
+      tags:
+        - user
+      summary: Logs out current logged in user session
+      operationId: logoutUser
+      responses:
+        200:
+          description: successful operation
+          
+  /user/{user_id}:
+    get:
+      tags:
+        - user
+      security:
+        - cookie_auth: []
+      summary: Get user by user id
+      description: Authorization required.
+      operationId: getUserById
+      parameters:
+        - name: user_id
+          in: path
+          description: The name that needs to be fetched.
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '404':
+          description: User not found
+          
+components:
+
+  schemas:
+
+    UserCreateResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        username:
+          type: string
+        email:
+          type: string
+      xml:
+        name: User
+        
+    UserCreateRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+      xml:
+        name: User
+        
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        username:
+          type: string
+        email:
+          type: string
+
+  securitySchemes:
+    cookie_auth:
+      type: apiKey
+      in: cookie
+      name: token
+
+
+# Added by API Auto Mocking Plugin
+servers:
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/tuch-ka/user_offers/1.0.0
