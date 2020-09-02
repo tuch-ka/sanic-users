@@ -9,6 +9,6 @@
 * `DB_DATABASE=`user_offers
 * `DB_USER=`username
 * `DB_PASSWORD=`password
-### Добавить src в PYTHONPATH
+### Добавить полный путь к src в PYTHONPATH
 ## Запуск программы:
 `python run.py`
