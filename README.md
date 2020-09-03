@@ -10,5 +10,8 @@
 * `DB_USER=`username
 * `DB_PASSWORD=`password
 ### Добавить полный путь к src в PYTHONPATH
+`export PYTHONPATH='/.../src'`
 ## Запуск программы:
 `python run.py`
+## Запуск тестов
+`pytest`

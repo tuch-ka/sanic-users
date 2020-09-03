@@ -5,3 +5,4 @@ sanic==20.6.3
 bcrypt==3.2.0
 aiopg==1.0.0
 peewee-async==0.7.0
+pytest-sanic==1.6.1
