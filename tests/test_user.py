@@ -60,8 +60,16 @@ async def test_user_registry_good_data_with_flood(test_cli):
     response = await test_cli.post('/user/registry', data=json.dumps(user_data))
     assert response.status == 201 or response.status == 409
 
-    if response.status != 409:
+    if response.status == 201:
         response_json = await response.json()
         assert user_data['username'] == response_json['username']
         assert user_data['email'] == response_json['email']
         assert 'foo' not in response_json
+
+
+async def test_user_get_by_id_no_auth(test_cli):
+    """
+    GET /user/<user_id>
+    """
+    response = await test_cli.get(f'/user/{0}')
+    assert response.status == 401
