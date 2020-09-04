@@ -26,7 +26,8 @@ class User(BasicModel):
         return {
             'user_id': self.user_id,
             'username': self.username,
-            'email': self.email
+            'email': self.email,
+            'offers': [offer.to_dict() for offer in self.offers],
         }
 
     @classmethod
@@ -66,3 +67,21 @@ class User(BasicModel):
             }
             self.__token = create_token(payload=payload)
         return self.__token
+
+
+class Offer(BasicModel):
+    """Модель объявления"""
+    offer_id = peewee.AutoField()
+    user_id = peewee.ForeignKeyField(User, backref='offers', field='user_id')
+    title = peewee.CharField()
+    text = peewee.CharField()
+
+    def __repr__(self):
+        return f'Offer: {self.title} ({self.user_id})'
+
+    def to_dict(self) -> dict:
+        return {
+            'offer_id': self.offer_id,
+            'title': self.title,
+            'text': self.text,
+        }
