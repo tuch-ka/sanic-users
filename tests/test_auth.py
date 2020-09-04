@@ -20,63 +20,69 @@ def test_cli(loop, app, sanic_client):
 # Tests #
 #########
 
-def test_token_create_and_read():
-    """Test creating readable tokens"""
-    # Success
-    payload = {'id': 1}
-    created_token = create_token(payload)
-    read_out_token = read_token(created_token)
-    assert read_out_token == payload
+
+class TestToken(object):
+    """
+    Тестирование функций создания и чтения токена
+    """
+
+    def test_token_create_and_read(self):
+        """Создание и чтение валидного токена"""
+        payload = {'id': 1}
+        created_token = create_token(payload)
+        read_out_token = read_token(created_token)
+        assert read_out_token == payload
+
+    def test_read_token_empty(self):
+        """Чтения пустого токена"""
+        broken_token_1 = read_token('')
+        assert broken_token_1 is None
+
+    def test_read_token_wrong(self):
+        """Чтение произвольного токена"""
+        broken_token_2 = read_token(
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg'
+        )
+        assert broken_token_2 is None
 
 
-def test_read_token_empty():
-    """Test read_token"""
-    broken_token_1 = read_token('')
-    assert broken_token_1 is None
-
-
-def test_read_token_wrong():
-    """Test read_token"""
-    broken_token_2 = read_token(
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg'
-    )
-    assert broken_token_2 is None
-
-
-async def test_auth_required_not_authorized():
-    """Test auth_required wrapper"""
-
+class TestAuthWrapper(object):
+    """
+    Тестирование декоратора проверки авторизации
+    """
     @auth_required
-    async def auth_testing(_):
+    async def auth_testing(self, _):
+        # Декорированная функция заглушка
         return empty(200)
 
-    request = type('EmptyObject', (object,), {})()
-    request.cookies = {}
+    async def test_auth_required_not_authorized(self):
+        """Не авторизованный запрос"""
+        request = type('EmptyObject', (object,), {})()
+        request.cookies = {}
 
-    response = await auth_testing(request)
-    assert response.status == 401
+        response = await self.auth_testing(request)
+        assert response.status == 401
 
+    async def test_auth_required_authorized(self):
+        """Авторизованный запрос"""
+        request = type('EmptyObject', (object,), {})()
+        request.cookies = {'token': create_token({'id': 1})}
 
-async def test_auth_required_authorized():
-    """Test auth_required wrapper"""
-
-    @auth_required
-    async def auth_testing(_):
-        return empty(200)
-
-    request = type('EmptyObject', (object,), {})()
-    request.cookies = {'token': create_token({'id': 1})}
-
-    response = await auth_testing(request)
-    assert response.status == 200
+        response = await self.auth_testing(request)
+        assert response.status == 200
 
 
-async def test_logout(test_cli):
+class TestAuthEndpoints(object):
     """
-    POST /user/logout
+    Тестирование снятия авторизации
     """
-    response = await test_cli.post('/user/logout')
-    assert response.status == 200
 
-    token = response.cookies.get('token').value
-    assert not token
+    async def test_logout(self, test_cli):
+        """
+        POST /user/logout
+        """
+        response = await test_cli.post('/user/logout')
+        assert response.status == 200
+
+        token = response.cookies.get('token').value
+        assert not token

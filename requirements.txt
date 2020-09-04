@@ -6,3 +6,4 @@ bcrypt==3.2.0
 aiopg==1.0.0
 peewee-async==0.7.0
 pytest-sanic==1.6.1
+pytest-mock==3.3.1
