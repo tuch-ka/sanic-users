@@ -130,7 +130,7 @@ class TestUserGet(object):
     @patch.object(User, 'get_by_id', returning_user_by_id)
     async def test_get_user_wrong_id(self, test_cli):
         """
-        Получение пользователя с неверным id
+        Получение пользователя
         """
         response = await test_cli.get(f'/user/{0}', cookies=self.cookies)
         assert response.status == 200
