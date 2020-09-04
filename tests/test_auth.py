@@ -138,7 +138,7 @@ class TestAuthEndpoints(object):
         }
 
         response = await test_cli.post('/user/auth', data=json.dumps(user_data))
-        assert response.status == 400
+        assert response.status == 401
 
     @patch.object(User, 'auth', returning_none)
     async def test_login_bad_data(self, test_cli):
