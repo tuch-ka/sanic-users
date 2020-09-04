@@ -109,7 +109,7 @@ class TestUserGet(object):
     GET /user/<user_id>
     """
     cookies = {
-        'token': create_token({'id': 0})
+        'token': create_token({'user_id': 0})
     }
 
     async def test_get_user_no_auth(self, test_cli):
